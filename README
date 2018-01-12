@@ -1,0 +1,3 @@
+External enrolment plugin.
+
+Similar to manual enrolments but has a separate permission structure and doesn't allow user editing of assignments.  Changes can only be made via the web-services.
