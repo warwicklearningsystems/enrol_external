@@ -82,13 +82,32 @@ class enrol_external_plugin extends enrol_plugin {
 
   public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
     // Get the standard user enrolment actions.
-    $actions = parent::get_user_enrolment_actions();
+    $actions = parent::get_user_enrolment_actions($manager, $ue);
 
     return $actions;
   }
 
   public function use_standard_editing_ui() {
     return true;
+  }
+
+  /**
+   * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
+   *
+   * @param context $context the context.
+   * @param integer $defaultrole the id of the role that is set as the default for self-enrolment
+   * @return array index is the role id, value is the role name
+   */
+  public function extend_assignable_roles($context, $defaultrole) {
+    global $DB;
+
+    $roles = get_assignable_roles($context, ROLENAME_BOTH);
+    if (!isset($roles[$defaultrole])) {
+      if ($role = $DB->get_record('role', array('id' => $defaultrole))) {
+        $roles[$defaultrole] = role_get_name($role, $context, ROLENAME_BOTH);
+      }
+    }
+    return $roles;
   }
 
   /**
@@ -106,7 +125,14 @@ class enrol_external_plugin extends enrol_plugin {
     $mform->setType('name', PARAM_TEXT);
 
     $options = $this->get_status_options();
-    $mform->addElement('select', 'status', get_string('status', 'enrol_cohort'), $options);
+    $mform->addElement('select', 'status', get_string('status', 'enrol_external'), $options);
+
+    $options = array('0' => 'No', '1' => 'Yes');
+    $mform->addElement('select', 'alterrole', get_string('alterroleafterenddate', 'enrol_external'), $options);
+
+    $options = array('optional' => true);
+    $roles = $this->extend_assignable_roles($coursecontext, $instance->roleid);
+    $mform->addElement('select', 'roleid', get_string('roleafterenddate', 'enrol_external'), $roles, $options);
 
 //    $options = $this->get_cohort_options($instance, $coursecontext);
 //    $mform->addElement('select', 'customint1', get_string('cohort', 'cohort'), $options);

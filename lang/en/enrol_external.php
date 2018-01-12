@@ -13,3 +13,5 @@ $string['pluginname'] = 'External enrolments';
 $string['pluginname_desc'] = 'Test plugin for external enrolments.';
 $string['status'] = 'Active';
 $string['creategroup'] = 'Create new group';
+$string['roleafterenddate'] = 'Role after course end date';
+$string['alterroleafterenddate'] = 'Alter role after end';
