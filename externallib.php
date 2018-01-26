@@ -191,6 +191,45 @@ class enrol_external_external extends external_api {
     return null;
   }
 
+  /**
+   * Returns description of method parameters.
+   *
+   * @return external_function_parameters
+   */
+  public static function list_instances_parameters()
+  {
+    return new external_function_parameters(
+      array(
+        'courseid' => new external_value(PARAM_INT, 'The course to unenrol the user from')
+      ));
+  }
+
+  /**
+   */
+  public static function list_instances($courseid) {
+
+  }
+
+  /**
+   * Returns description of method result value.
+   *
+   * @return null
+   */
+  public static function list_instances_returns() {
+
+    return new external_multiple_structure(
+      new external_single_structure(
+        array(
+          'instanceid' => new external_value(PARAM_INT, 'instanceid'),
+          'status' => new external_value(PARAM_INT, 'status'),
+        )
+      ), 'list of instances'
+    );
+
+  }
+
+
+
 
 
 }
