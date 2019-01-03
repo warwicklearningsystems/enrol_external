@@ -1,3 +1,15 @@
-External enrolment plugin.
+# External enrolment plugin for Moodle
 
 Similar to manual enrolments but has a separate permission structure and doesn't allow user editing of assignments.  Changes can only be made via the web-services.
+
+## Web services functions
+
+This plugin implements an enrolment method with the following web services functions:
+
+* enrol_external_list_instances - List all instances of the method in a course
+* enrol_external_add_instance - Add an instance of the enrolment method to a course
+* enrol_external_remove_instance - Removes an instance of the enrolment method from a course
+* enrol_external_enrol_users - Enrol users into a course/enrolment instance.
+* enrol_external_unenrol_users - Unenrols users from a course/enrolment instance.
+
+
