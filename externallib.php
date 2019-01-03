@@ -99,12 +99,13 @@ class enrol_external_webservices extends external_api {
 
     return new external_function_parameters(
       array(
-        'enrol' => new external_multiple_structure(
+        'enrolments' => new external_multiple_structure(
           new external_single_structure(
             array(
               'courseid' => new external_value(PARAM_INT, "Course ID"),
               'instanceid' => new external_value(PARAM_INT, "Enrolment instance ID"),
               'userid' => new external_value(PARAM_INT, 'User ID'),
+              'roleid' => new external_value(PARAM_INT, 'Role ID'),
             )
           )
         )
@@ -114,14 +115,85 @@ class enrol_external_webservices extends external_api {
   }
 
   public static function external_enrol_users_returns() {
-    return new external_single_structure(
-      array(
-        'status' => new external_value(PARAM_BOOL, 'Success')
-      )
-    );
+    return null;
   }
 
-  public static function external_enrol_users() {
+  public static function external_enrol_users($enrolments) {
+
+    global $DB, $CFG;
+
+    require_once($CFG->libdir . '/enrollib.php');
+
+    $params = self::validate_parameters(self::external_enrol_users_parameters(),
+      array('enrolments' => $enrolments));
+
+    $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
+    // (except if the DB doesn't support it).
+
+    // Retrieve the manual enrolment plugin.
+    $enrol = enrol_get_plugin('external');
+    // TODO: fix for external
+    if (empty($enrol)) {
+      throw new moodle_exception('manualpluginnotinstalled', 'enrol_manual');
+    }
+
+    foreach ($params['enrolments'] as $enrolment) {
+      // Ensure the current user is allowed to run this function in the enrolment context.
+      $context = context_course::instance($enrolment['courseid'], IGNORE_MISSING);
+      self::validate_context($context);
+
+      // Check that the user has the permission to manual enrol.
+      require_capability('enrol/external:enrol', $context);
+
+      // Throw an exception if user is not able to assign the role.
+      $roles = get_assignable_roles($context);
+      if (!array_key_exists($enrolment['roleid'], $roles)) {
+        $errorparams = new stdClass();
+        $errorparams->roleid = $enrolment['roleid'];
+        $errorparams->courseid = $enrolment['courseid'];
+        $errorparams->userid = $enrolment['userid'];
+        throw new moodle_exception('wsusercannotassign', 'enrol_manual', '', $errorparams);
+      }
+
+      // Check external enrolment plugin instance is enabled/exist.
+      $instance = null;
+      $enrolinstances = enrol_get_instances($enrolment['courseid'], true);
+      foreach ($enrolinstances as $courseenrolinstance) {
+        if ($courseenrolinstance->id == $enrolment['instanceid']) {
+          $instance = $courseenrolinstance;
+          break;
+        }
+      }
+
+      if (empty($instance)) {
+        // TODO: fix for external
+        $errorparams = new stdClass();
+        $errorparams->courseid = $enrolment['courseid'];
+        throw new moodle_exception('wsnoinstance', 'enrol_manual', $errorparams);
+      }
+
+      // Check that the plugin accept enrolment (it should always the case, it's hard coded in the plugin).
+      if (!$enrol->allow_enrol($instance)) {
+        $errorparams = new stdClass();
+        $errorparams->roleid = $enrolment['roleid'];
+        $errorparams->courseid = $enrolment['courseid'];
+        $errorparams->userid = $enrolment['userid'];
+        // TODO: fix for external
+        throw new moodle_exception('wscannotenrol', 'enrol_manual', '', $errorparams);
+      }
+
+      // Finally proceed the enrolment.
+      $enrolment['timestart'] = isset($enrolment['timestart']) ? $enrolment['timestart'] : 0;
+      $enrolment['timeend'] = isset($enrolment['timeend']) ? $enrolment['timeend'] : 0;
+      $enrolment['status'] = (isset($enrolment['suspend']) && !empty($enrolment['suspend'])) ?
+        ENROL_USER_SUSPENDED : ENROL_USER_ACTIVE;
+
+      $enrol->enrol_user($instance, $enrolment['userid'], $enrolment['roleid'],
+        $enrolment['timestart'], $enrolment['timeend'], $enrolment['status']);
+
+    }
+
+    $transaction->allow_commit();
 
   }
 
