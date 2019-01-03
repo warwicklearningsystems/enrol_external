@@ -203,10 +203,11 @@ class enrol_external_webservices extends external_api {
 
     return new external_function_parameters(
       array(
-        'unenrol' => new external_multiple_structure(
+        'enrolments' => new external_multiple_structure(
           new external_single_structure(
             array(
               'courseid' => new external_value(PARAM_INT, "Course ID"),
+              'instanceid' => new external_value(PARAM_INT, "Enrolment instance ID"),
               'userid' => new external_value(PARAM_INT, 'User ID'),
             )
           )
@@ -217,16 +218,40 @@ class enrol_external_webservices extends external_api {
   }
 
   public static function external_unenrol_users_returns() {
-    return new external_single_structure(
-      array(
-        'status' => new external_value(PARAM_BOOL, 'Success')
-      )
-    );
-
+    return null;
   }
 
-  public static function external_unenrol_users() {
+  public static function external_unenrol_users($enrolments) {
+    global $CFG, $DB;
+    $params = self::validate_parameters(self::external_unenrol_users_parameters(), array('enrolments' => $enrolments));
+    require_once($CFG->libdir . '/enrollib.php');
+    $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs.
+    $enrol = enrol_get_plugin('external');
+    if (empty($enrol)) {
+      // TODO: update for external
+      throw new moodle_exception('manualpluginnotinstalled', 'enrol_manual');
+    }
 
+    foreach ($params['enrolments'] as $enrolment) {
+      $context = context_course::instance($enrolment['courseid']);
+      self::validate_context($context);
+      require_capability('enrol/external:unenrol', $context);
+      $instance = $DB->get_record('enrol', array('courseid' => $enrolment['courseid'], 'id' => $enrolment['instanceid'], 'enrol' => 'external'));
+      if (!$instance) {
+        // TODO: update for external
+        throw new moodle_exception('wsnoinstance', 'enrol_manual', $enrolment);
+      }
+      $user = $DB->get_record('user', array('id' => $enrolment['userid']));
+      if (!$user) {
+        throw new invalid_parameter_exception('User id not exist: '.$enrolment['userid']);
+      }
+      if (!$enrol->allow_unenrol($instance)) {
+        // TODO: update for external
+        throw new moodle_exception('wscannotunenrol', 'enrol_manual', '', $enrolment);
+      }
+      $enrol->unenrol_user($instance, $enrolment['userid']);
+    }
+    $transaction->allow_commit();
   }
 
   /* List instances in a course */
