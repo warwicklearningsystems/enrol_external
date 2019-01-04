@@ -52,10 +52,10 @@ $functions = array(
     'capabilities'=> 'enrol/external:unenrol',
     'type'        => 'write',
   ),
-/*
+
   'enrol_external_add_sits_enrolments' => array(
     'classname'   => 'enrol_external_webservices',
-    'methodname'  => 'add_sits_enrolments',
+    'methodname'  => 'external_add_sits_enrolments',
     'classpath'   => 'enrol/external/externallib.php',
     'description' => 'Add enrolments for SITS module',
     'capabilities'=> 'enrol/external:enrol',
@@ -64,14 +64,12 @@ $functions = array(
 
   'enrol_external_remove_sits_enrolments' => array(
     'classname'   => 'enrol_external_webservices',
-    'methodname'  => 'add_sits_enrolments',
+    'methodname'  => 'external_remove_sits_enrolments',
     'classpath'   => 'enrol/external/externallib.php',
     'description' => 'Remove enrolments for SITS module',
     'capabilities'=> 'enrol/external:enrol',
     'type'        => 'write',
   ),
-*/
-
 
 
 );
