@@ -106,6 +106,9 @@ class enrol_external_webservices extends external_api {
               'instanceid' => new external_value(PARAM_INT, "Enrolment instance ID"),
               'userid' => new external_value(PARAM_INT, 'User ID'),
               'roleid' => new external_value(PARAM_INT, 'Role ID'),
+              'timestart' => new external_value(PARAM_INT, 'Timestamp when the enrolment start', VALUE_OPTIONAL),
+              'timeend' => new external_value(PARAM_INT, 'Timestamp when the enrolment end', VALUE_OPTIONAL),
+              'suspend' => new external_value(PARAM_INT, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL)
             )
           )
         )
@@ -330,6 +333,9 @@ class enrol_external_webservices extends external_api {
             array(
               'userid' => new external_value(PARAM_INT, 'User ID'),
               'roleid' => new external_value(PARAM_INT, 'Role ID'),
+              'timestart' => new external_value(PARAM_INT, 'Timestamp when the enrolment start', VALUE_OPTIONAL),
+              'timeend' => new external_value(PARAM_INT, 'Timestamp when the enrolment end', VALUE_OPTIONAL),
+              'suspend' => new external_value(PARAM_INT, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL)
             )
           )
         )
