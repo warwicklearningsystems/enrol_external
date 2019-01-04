@@ -26,7 +26,8 @@ class enrol_external_plugin extends enrol_plugin {
     if (empty($instance)) {
       $enrol = $this->get_name();
       return get_string('pluginname', 'enrol_'.$enrol);
-
+    } else if(isset($instance->customchar1) && isset($instance->customchar2) && isset($instance->customchar3)) {
+      return "Module " . $instance->customchar1 . " occurrence " . $instance->customchar2 . " (" . $instance->customchar3 . ")";
     } else if (empty($instance->name)) {
       $enrol = $this->get_name();
       return get_string('pluginname', 'enrol_'.$enrol);
