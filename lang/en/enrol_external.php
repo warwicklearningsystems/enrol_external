@@ -15,3 +15,7 @@ $string['status'] = 'Active';
 $string['creategroup'] = 'Create new group';
 $string['roleafterenddate'] = 'Role after course end date';
 $string['alterroleafterenddate'] = 'Alter role after end';
+
+$string['external:enrol'] = 'Enrol users using the external enrolment method';
+$string['external:unenrol'] = 'Unenrol users using the external enrolment method';
+$string['external:config'] = 'Configure the external enrolment method';
