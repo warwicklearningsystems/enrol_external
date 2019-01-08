@@ -20,6 +20,11 @@ class enrol_external_plugin extends enrol_plugin {
     return true;
   }
 
+  // TODO: this should be FALSE before this plugin goes into production use
+  public function can_delete_instance($instance) {
+    return true;
+  }
+
   public function get_instance_name($instance) {
     global $DB;
 
