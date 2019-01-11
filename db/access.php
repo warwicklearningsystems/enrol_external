@@ -41,4 +41,18 @@ $capabilities = array(
     )
   ),
 
+  'enrol/external:managelocal' => array(
+
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_COURSE,
+    'archetypes' => array()
+  ),
+
+  'enrol/external:unenrollocal' => array(
+
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_COURSE,
+    'archetypes' => array()
+  ),
+
 );
