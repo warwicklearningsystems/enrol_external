@@ -94,7 +94,7 @@ class enrol_external_plugin extends enrol_plugin {
     $params['ue'] = $ue->id;
 
     // Edit enrolment action.
-    if ($this->allow_manage($instance) && has_capability("enrol/external:editlocal", $context)) {
+    if ($this->allow_manage($instance) && has_capability("enrol/external:managelocal", $context)) {
       $title = get_string('editenrolment', 'enrol');
       $icon = new pix_icon('t/edit', $title);
       $url = new moodle_url('/enrol/editenrolment.php', $params);

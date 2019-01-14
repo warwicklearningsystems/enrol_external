@@ -19,5 +19,5 @@ $string['alterroleafterenddate'] = 'Alter role after end';
 $string['external:enrol'] = 'Enrol users using the external enrolment method';
 $string['external:unenrol'] = 'Unenrol users using the external enrolment method';
 $string['external:config'] = 'Configure the external enrolment method';
-$string['external:editlocal'] = 'Locally edit an external enrolment';
+$string['external:managelocal'] = 'Locally edit an external enrolment';
 $string['external:unenrollocal'] = 'Locally unenrol an external enrolment';
