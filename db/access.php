@@ -55,4 +55,11 @@ $capabilities = array(
     'archetypes' => array()
   ),
 
+  'enrol/external:manage' => array(
+
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_COURSE,
+    'archetypes' => array()
+  ),
+
 );
