@@ -29,7 +29,8 @@ class enrol_external_webservices extends external_api {
   public static function external_add_instance_returns() {
     return new external_single_structure(
       array(
-        'status' => new external_value(PARAM_BOOL, 'Success')
+        'status' => new external_value(PARAM_BOOL, 'Success'),
+        'instanceid' => new external_value(PARAM_INT, "Instance ID", VALUE_OPTIONAL)
       )
     );
   }
@@ -56,7 +57,10 @@ class enrol_external_webservices extends external_api {
       $instanceid = $plugin->add_instance($course, array('name' => $name));
 
       // If we managed to add an instance, let's enable it
-      if( !$instanceid ) {
+      if( $instanceid ) {
+        // Return instance ID if successful
+        $n->instanceid = $instanceid;
+      } else {
         $n->status = FALSE;
       }
 
