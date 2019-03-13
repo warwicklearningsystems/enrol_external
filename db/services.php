@@ -23,6 +23,15 @@ $functions = array(
     'type'        => 'write',
   ),
 
+  'enrol_external_remove_all_instances' => array(
+    'classname'   => 'enrol_external_webservices',
+    'methodname'  => 'external_remove_all_instances',
+    'classpath'   => 'enrol/external/externallib.php',
+    'description' => 'Remove all enrolment methods instance from a course',
+    'capabilities'=> 'enrol/external:config',
+    'type'        => 'write',
+  ),
+
   // === query functions === //
 
   'enrol_external_list_instances' => array(

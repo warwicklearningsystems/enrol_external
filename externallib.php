@@ -128,6 +128,60 @@ class enrol_external_webservices extends external_api {
     return $n;
   }
 
+  /* Remove all instances */
+
+  public static function external_remove_all_instances_parameters()
+  {
+    return new external_function_parameters(
+
+      array(
+        'courseid' => new external_value(PARAM_INT, "Course ID")
+      )
+
+    );
+
+  }
+
+  public static function external_remove_all_instances_returns() {
+    return new external_single_structure(
+      array(
+        'status' => new external_value(PARAM_BOOL, 'Success')
+      )
+    );
+  }
+
+  public static function external_remove_all_instances($courseid) {
+    global $DB;
+
+    $n = new stdClass();
+    $n->status = TRUE;
+
+    $params = self::validate_parameters(self::external_remove_instance_parameters(),
+      array('courseid' => $courseid));
+
+    // Find the course
+    $course = get_course($params['courseid']);
+
+    // Find the plugin
+    $plugin = enrol_get_plugin('external');
+
+    // If both course and plugin are valid, then let's add the default
+    // instance of this enrolment method
+    if($plugin && $course) {
+
+      $enrolinstances = enrol_get_instances($course->id, true);
+
+      foreach($enrolinstances as $courseenrolinstance) {
+          $plugin->delete_instance($courseenrolinstance);
+      }
+
+    } else {
+      $n->status = FALSE;
+    }
+
+    return $n;
+  }
+
 
   /* Enrol users */
 
