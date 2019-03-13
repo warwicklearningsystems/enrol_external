@@ -352,7 +352,8 @@ class enrol_external_webservices extends external_api {
   public static function external_list_instances_parameters() {
     return new external_function_parameters(
       array(
-        'courseid' => new external_value(PARAM_INT, "Course ID")
+        'courseid' => new external_value(PARAM_INT, "Course ID"),
+        'name' => new external_value(PARAM_TEXT, 'Name of enrolment method', VALUE_OPTIONAL)
       )
     );
   }
@@ -368,14 +369,14 @@ class enrol_external_webservices extends external_api {
     );
   }
 
-  public static function external_list_instances($courseid) {
+  public static function external_list_instances($courseid, $name = '') {
 
     global $DB;
 
     $n = array();
 
     $params = self::validate_parameters(self::external_list_instances_parameters(),
-      array('courseid' => $courseid));
+      array('courseid' => $courseid, 'name' => $name));
 
     // Find the course
     $course = get_course($params['courseid']);
@@ -391,7 +392,8 @@ class enrol_external_webservices extends external_api {
 
       foreach($enrolinstances as $courseenrolinstance) {
 
-        if ($courseenrolinstance->enrol == "external") {
+        if ($courseenrolinstance->enrol == "external" &&
+          ( $params['name'] == "" || ($params['name'] != "" && $params['name'] == $courseenrolinstance->name) )) {
           $i = new stdClass();
 
           $i->id = $courseenrolinstance->id;
